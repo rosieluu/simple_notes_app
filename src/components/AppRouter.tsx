@@ -4,28 +4,7 @@ import { api } from "../../convex/_generated/api";
 import { SignInPage } from "../pages/SignInPage";
 import { HomePage } from "../pages/HomePage";
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const loggedInUser = useQuery(api.auth.loggedInUser);
-
-  if (loggedInUser === undefined) {
-    // Loading state
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (loggedInUser === null) {
-    // User not authenticated, redirect to signin
-    return <Navigate to="/signin" replace />;
-  }
-
-  // User is authenticated
-  return <>{children}</>;
-}
-
-function PublicRoute({ children }: { children: React.ReactNode }) {
+function PublicSignInRoute({ children }: { children: React.ReactNode }) {
   const loggedInUser = useQuery(api.auth.loggedInUser);
 
   if (loggedInUser === undefined) {
@@ -52,18 +31,14 @@ export function AppRouter() {
       <Routes>
         <Route 
           path="/" 
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          } 
+          element={<HomePage />} 
         />
         <Route 
           path="/signin" 
           element={
-            <PublicRoute>
+            <PublicSignInRoute>
               <SignInPage />
-            </PublicRoute>
+            </PublicSignInRoute>
           } 
         />
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,5 +1,34 @@
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { NotesApp } from "../NotesApp";
+import { Hero } from "../components/ui/animated-hero";
 
 export function HomePage() {
-  return <NotesApp />;
+  const loggedInUser = useQuery(api.auth.loggedInUser);
+
+  if (loggedInUser === undefined) {
+    // Loading state
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (loggedInUser === null) {
+    // User not authenticated - show Hero only
+    return (
+      <div className="block">
+        <Hero />
+      </div>
+    );
+  }
+
+  // User is authenticated - show Hero + Notes
+  return (
+    <div className="block">
+      <Hero />
+      <NotesApp />
+    </div>
+  );
 }
