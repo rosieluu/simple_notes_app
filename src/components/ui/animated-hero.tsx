@@ -32,7 +32,7 @@ function Hero() {
         <div className="flex gap-8 py-20 lg:py-32 items-center justify-center flex-col">
           <div>
             <Button className="gap-2 bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200">
-              {isAuthenticated ? "Bienvenue dans votre studio !" : "Découvrir nos réalisations"}
+              {isAuthenticated ? "Welcome to your studio!" : "Discover our portfolio"}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -57,7 +57,7 @@ function Hero() {
 
             <p className="text-lg md:text-xl leading-relaxed tracking-normal text-gray-600 max-w-2xl text-center">
               {isAuthenticated 
-                ? "Bienvenue dans votre gestionnaire de projets immobiliers. Organisez vos idées et créez des visuels époustouflants pour valoriser vos biens."
+                ? "Welcome to your real estate project manager. Organize your ideas and create stunning visuals to enhance your properties."
                 : "Instantly transform your photos into real estate visuals that sell"
               }
             </p>
@@ -70,13 +70,13 @@ function Hero() {
                   className="gap-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 px-6 py-3"
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
                 >
-                  Voir mes projets
+                  View my projects
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                   </svg>
                 </Button>
                 <Button className="gap-2 bg-primary text-white hover:bg-primary-hover px-6 py-3">
-                  Générer une photo
+                  Generate photo
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -89,7 +89,7 @@ function Hero() {
                   className="gap-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 px-6 py-3"
                   onClick={() => navigate('/signin')}
                 >
-                  Voir la galerie
+                  View gallery
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -98,7 +98,7 @@ function Hero() {
                   className="gap-2 bg-primary text-white hover:bg-primary-hover px-6 py-3"
                   onClick={() => navigate('/signin')}
                 >
-                  Commencer gratuitement
+                  Get started free
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
