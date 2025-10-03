@@ -34,7 +34,7 @@ export function LoginForm() {
             formData.set("flow", flow);
             void signIn("password", formData)
               .then(() => {
-                navigate("/");
+                navigate("/dashboard");
               })
               .catch((error) => {
                 let toastTitle = "";
@@ -117,7 +117,7 @@ export function LoginForm() {
 
           <button 
             type="button"
-            onClick={() => void signIn("anonymous").then(() => navigate("/"))}
+            onClick={() => void signIn("anonymous").then(() => navigate("/dashboard"))}
             disabled={submitting}
             className="mt-4 w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >

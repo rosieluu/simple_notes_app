@@ -1,7 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { NotesApp } from "../NotesApp";
 import { Hero } from "../components/ui/animated-hero";
+import { Navigate } from "react-router-dom";
 
 export function HomePage() {
   const loggedInUser = useQuery(api.auth.loggedInUser);
@@ -15,20 +15,15 @@ export function HomePage() {
     );
   }
 
-  if (loggedInUser === null) {
-    // User not authenticated - show Hero only
-    return (
-      <div className="block">
-        <Hero />
-      </div>
-    );
+  if (loggedInUser !== null) {
+    // User is authenticated - redirect to dashboard
+    return <Navigate to="/dashboard" replace />;
   }
 
-  // User is authenticated - show Hero + Notes
+  // User not authenticated - show Hero only
   return (
     <div className="block">
       <Hero />
-      <NotesApp />
     </div>
   );
 }

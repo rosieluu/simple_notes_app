@@ -3,6 +3,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { SignInPage } from "../pages/SignInPage";
 import { HomePage } from "../pages/HomePage";
+import { DashboardPage } from "../pages/DashboardPage";
 
 function PublicSignInRoute({ children }: { children: React.ReactNode }) {
   const loggedInUser = useQuery(api.auth.loggedInUser);
@@ -17,11 +18,32 @@ function PublicSignInRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (loggedInUser !== null) {
-    // User is authenticated, redirect to home
-    return <Navigate to="/" replace />;
+    // User is authenticated, redirect to dashboard
+    return <Navigate to="/dashboard" replace />;
   }
 
   // User is not authenticated
+  return <>{children}</>;
+}
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const loggedInUser = useQuery(api.auth.loggedInUser);
+
+  if (loggedInUser === undefined) {
+    // Loading state
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (loggedInUser === null) {
+    // User is not authenticated, redirect to home
+    return <Navigate to="/" replace />;
+  }
+
+  // User is authenticated
   return <>{children}</>;
 }
 
@@ -39,6 +61,14 @@ export function AppRouter() {
             <PublicSignInRoute>
               <SignInPage />
             </PublicSignInRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
           } 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
