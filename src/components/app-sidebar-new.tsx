@@ -12,7 +12,7 @@ import {
   SidebarRail,
 } from "./ui/sidebar"
 
-// Configuration adaptée pour l'application de notes
+// Configuration simple pour commencer
 const data = {
   user: {
     name: "User",
@@ -22,15 +22,15 @@ const data = {
   teams: [
     {
       name: "Simple Notes",
-      logo: () => React.createElement("span", null, "📝"),
+      logo: () => <span>📝</span>,
       plan: "Personal",
     },
   ],
   navMain: [
     {
-      title: "Notes",
+      title: "Dashboard",
       url: "/dashboard",
-      icon: () => React.createElement("span", null, "📝"),
+      icon: () => <span>🏠</span>,
       isActive: true,
       items: [
         {
@@ -48,59 +48,47 @@ const data = {
       ],
     },
     {
-      title: "Organization",
+      title: "Create",
       url: "#",
-      icon: () => React.createElement("span", null, "🏷️"),
+      icon: () => <span>➕</span>,
       items: [
         {
-          title: "Tags",
+          title: "New Note",
+          url: "#new-note",
+        },
+        {
+          title: "Quick Note",
+          url: "#quick-note",
+        },
+      ],
+    },
+    {
+      title: "Organize",
+      url: "#",
+      icon: () => <span>🏷️</span>,
+      items: [
+        {
+          title: "All Tags",
           url: "/dashboard?view=tags",
         },
         {
           title: "Categories",
           url: "/dashboard?view=categories",
         },
-        {
-          title: "Search",
-          url: "/dashboard?view=search",
-        },
       ],
     },
     {
       title: "Archive",
       url: "#",
-      icon: () => React.createElement("span", null, "📦"),
+      icon: () => <span>📦</span>,
       items: [
         {
-          title: "Archived",
+          title: "Archived Notes",
           url: "/dashboard?filter=archived",
         },
         {
-          title: "Deleted",
+          title: "Deleted Notes", 
           url: "/dashboard?filter=deleted",
-        },
-        {
-          title: "Export",
-          url: "/dashboard?action=export",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: () => React.createElement("span", null, "⚙️"),
-      items: [
-        {
-          title: "General",
-          url: "/dashboard/settings",
-        },
-        {
-          title: "Preferences",
-          url: "/dashboard/preferences",
-        },
-        {
-          title: "Account",
-          url: "/dashboard/account",
         },
       ],
     },
@@ -109,17 +97,17 @@ const data = {
     {
       name: "Personal Notes",
       url: "/dashboard?category=personal",
-      icon: () => React.createElement("span", null, "�"),
+      icon: () => <span>📝</span>,
     },
     {
       name: "Work Notes",
-      url: "/dashboard?category=work",
-      icon: () => React.createElement("span", null, "💼"),
+      url: "/dashboard?category=work", 
+      icon: () => <span>💼</span>,
     },
     {
-      name: "Ideas & Inspiration",
+      name: "Ideas",
       url: "/dashboard?category=ideas",
-      icon: () => React.createElement("span", null, "💡"),
+      icon: () => <span>💡</span>,
     },
   ],
 };
