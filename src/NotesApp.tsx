@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { SignOutButton } from "./SignOutButton";
+import { Button } from "./components/ui/button";
 import { Id } from "../convex/_generated/dataModel";
 import { toast } from "sonner";
 
@@ -150,12 +151,25 @@ export function NotesApp() {
 
       {/* Create Note Button */}
       {!isCreating && (
-        <button
+        <Button
           onClick={() => setIsCreating(true)}
-          className="w-full mb-6 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          className="w-full mb-6 bg-primary text-white hover:bg-primary-hover"
         >
+          <svg 
+            className="w-4 h-4 mr-2" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M12 4v16m8-8H4" 
+            />
+          </svg>
           Create New Note
-        </button>
+        </Button>
       )}
 
       {/* Create/Edit Form */}
