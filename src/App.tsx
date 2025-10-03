@@ -1,6 +1,6 @@
 import { Authenticated, Unauthenticated, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { SignInForm } from "./SignInForm";
+import { LoginForm } from "./components/login-form";
 import { SignOutButton } from "./SignOutButton";
 import { Toaster } from "sonner";
 import { NotesApp } from "./NotesApp";
@@ -37,7 +37,7 @@ function Content() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Notes</h1>
               <p className="text-gray-600">Sign in to start taking notes</p>
             </div>
-            <SignInForm />
+            <LoginForm />
           </div>
         </div>
       </Unauthenticated>
