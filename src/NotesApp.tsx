@@ -153,7 +153,7 @@ export function NotesApp() {
       {!isCreating && (
         <Button
           onClick={() => setIsCreating(true)}
-          className="w-full mb-6 bg-primary text-white hover:bg-primary-hover"
+          className="w-full mb-6 border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50"
         >
           <svg 
             className="w-4 h-4 mr-2" 

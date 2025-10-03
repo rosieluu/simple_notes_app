@@ -2,9 +2,11 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
   const { signIn } = useAuthActions();
+  const navigate = useNavigate();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,19 +32,23 @@ export function LoginForm() {
             setSubmitting(true);
             const formData = new FormData(e.target as HTMLFormElement);
             formData.set("flow", flow);
-            void signIn("password", formData).catch((error) => {
-              let toastTitle = "";
-              if (error.message.includes("Invalid password")) {
-                toastTitle = "Invalid password. Please try again.";
-              } else {
-                toastTitle =
-                  flow === "signIn"
-                    ? "Could not sign in, did you mean to sign up?"
-                    : "Could not sign up, did you mean to sign in?";
-              }
-              toast.error(toastTitle);
-              setSubmitting(false);
-            });
+            void signIn("password", formData)
+              .then(() => {
+                navigate("/");
+              })
+              .catch((error) => {
+                let toastTitle = "";
+                if (error.message.includes("Invalid password")) {
+                  toastTitle = "Invalid password. Please try again.";
+                } else {
+                  toastTitle =
+                    flow === "signIn"
+                      ? "Could not sign in, did you mean to sign up?"
+                      : "Could not sign up, did you mean to sign in?";
+                }
+                toast.error(toastTitle);
+                setSubmitting(false);
+              });
           }}
         >
           <div className="space-y-2">
@@ -111,7 +117,7 @@ export function LoginForm() {
 
           <button 
             type="button"
-            onClick={() => void signIn("anonymous")}
+            onClick={() => void signIn("anonymous").then(() => navigate("/"))}
             disabled={submitting}
             className="mt-4 w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
