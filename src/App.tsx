@@ -35,7 +35,7 @@ function Content() {
           <div className="w-full max-w-md mx-auto p-8">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Notes</h1>
-              <p className="text-gray-600">Sign in to start taking notes</p>
+              <p className="text-gray-600">Task management, with a human touch</p>
             </div>
             <LoginForm />
           </div>
