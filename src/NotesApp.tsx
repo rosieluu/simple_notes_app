@@ -5,6 +5,7 @@ import { SignOutButton } from "./SignOutButton";
 import { Button } from "./components/ui/button";
 import { Id } from "../convex/_generated/dataModel";
 import { toast } from "sonner";
+import { MultiImageUpload } from "./components/MultiImageUpload";
 
 export function NotesApp() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,6 +16,7 @@ export function NotesApp() {
   const [content, setContent] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [uploadedImageIds, setUploadedImageIds] = useState<Id<"_storage">[]>([]);
 
   const notes = useQuery(api.notes.search, { 
     query: searchQuery, 
@@ -28,22 +30,24 @@ export function NotesApp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    // Allow empty title and content now
 
     try {
       if (editingNote) {
         await updateNote({
           id: editingNote,
-          title: title.trim(),
-          content: content.trim(),
+          title: title.trim() || undefined,
+          content: content.trim() || undefined,
           tags,
+          imageIds: uploadedImageIds.length > 0 ? uploadedImageIds : undefined,
         });
         toast.success("Note updated!");
       } else {
         await createNote({
-          title: title.trim(),
-          content: content.trim(),
+          title: title.trim() || undefined,
+          content: content.trim() || undefined,
           tags,
+          imageIds: uploadedImageIds.length > 0 ? uploadedImageIds : undefined,
         });
         toast.success("Note created!");
       }
@@ -58,6 +62,7 @@ export function NotesApp() {
     setTitle(note.title);
     setContent(note.content);
     setTags(note.tags);
+    setUploadedImageIds(note.imageIds || []);
     setIsCreating(true);
   };
 
@@ -77,6 +82,7 @@ export function NotesApp() {
     setContent("");
     setTags([]);
     setTagInput("");
+    setUploadedImageIds([]);
     setIsCreating(false);
     setEditingNote(null);
   };
@@ -132,7 +138,7 @@ export function NotesApp() {
             >
               All
             </button>
-            {allTags.map((tag) => (
+            {allTags.map((tag: string) => (
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag === selectedTag ? "" : tag)}
@@ -175,23 +181,47 @@ export function NotesApp() {
       {/* Create/Edit Form */}
       {isCreating && (
         <form onSubmit={handleSubmit} className="mb-8 p-6 border border-gray-200 rounded-lg bg-gray-50">
-          <input
-            type="text"
-            placeholder="Note title..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full mb-4 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          />
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Title (Optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter note title..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
           
-          <textarea
-            placeholder="Write your note..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={6}
-            className="w-full mb-4 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-            required
-          />
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Content (Optional)
+            </label>
+            <textarea
+              placeholder="Write your note here... Leave empty to use default real estate prompt."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={6}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Attach Images (Optional) - Max 3
+            </label>
+            <MultiImageUpload
+              onImagesUploaded={setUploadedImageIds}
+              currentImageUrls={
+                uploadedImageIds.length > 0 && editingNote 
+                  ? notes.find((n: any) => n._id === editingNote)?.imageUrls || []
+                  : []
+              }
+              maxImages={3}
+            />
+          </div>
 
           {/* Tags Input */}
           <div className="mb-4">
@@ -259,7 +289,7 @@ export function NotesApp() {
             {searchQuery || selectedTag ? "No notes found" : "No notes yet. Create your first note!"}
           </div>
         ) : (
-          notes.map((note) => (
+          notes.map((note: any) => (
             <div key={note._id} className="p-6 border border-gray-200 rounded-lg hover:shadow-sm transition-shadow bg-white">
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-lg font-semibold text-gray-900 flex-1">{note.title}</h3>
@@ -281,9 +311,28 @@ export function NotesApp() {
               
               <p className="text-gray-700 mb-4 whitespace-pre-wrap">{note.content}</p>
               
+              {/* Display attached images if exist */}
+              {note.imageUrls && note.imageUrls.length > 0 && (
+                <div className="mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {note.imageUrls.map((imageUrl: string, index: number) => (
+                      <img
+                        key={index}
+                        src={imageUrl}
+                        alt={`Note attachment ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      />
+                    ))}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {note.imageUrls.length} image(s) attached
+                  </div>
+                </div>
+              )}
+              
               {note.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {note.tags.map((tag) => (
+                  {note.tags.map((tag: string) => (
                     <span
                       key={tag}
                       className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-sm cursor-pointer hover:bg-gray-200"

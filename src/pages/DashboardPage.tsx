@@ -68,6 +68,9 @@ export function DashboardPage() {
             <p className="text-muted-foreground">
               Welcome back, {loggedInUser.email || "Anonymous User"}. Manage and organize your notes here.
             </p>
+            <div className="text-sm text-blue-600 bg-blue-50 p-2 rounded">
+              ✨ New: You can now attach images to your notes!
+            </div>
           </div>
           <div className="flex-1">
             <NotesApp />
