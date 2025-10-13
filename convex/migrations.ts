@@ -1,54 +1,23 @@
 import { Migrations } from "@convex-dev/migrations";
-import { components } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import { internalMutation } from "./_generated/server";
 
-// Initialiser le système de migrations
-export const migrations = new Migrations<DataModel>(components.migrations, {
-  internalMutation,
-});
+// Temporaire : désactiver les migrations jusqu'à ce que components soit disponible
+// import { components } from "./_generated/api.js";
 
-// Runner générique pour toutes les migrations futures
-export const run = migrations.runner();
+// Temporaire : désactiver les migrations jusqu'à configuration complète
+// export const migrations = new Migrations<DataModel>(components.migrations, {
+//   internalMutation,
+// });
 
-// ⚠️ MIGRATION OPTIONNELLE ⚠️ 
-// Cette migration n'est nécessaire QUE si vous avez des notes existantes en production
-// Puisque vous avez supprimé les anciennes notes, cette migration peut être ignorée
-export const addImageFieldsToNotes = migrations.define({
-  table: "notes",
-  migrateOne: async (ctx, doc) => {
-    // Vérifier si les champs image existent déjà (pour les nouvelles notes)
-    const updates: any = {};
-    let needsUpdate = false;
-
-    // Ces champs sont maintenant requis par le nouveau schéma
-    if (!doc.imageIds) {
-      updates.imageIds = [];
-      needsUpdate = true;
-    }
-
-    if (!doc.imageUrls) {
-      updates.imageUrls = [];
-      needsUpdate = true;
-    }
-
-    if (doc.hasImages === undefined) {
-      updates.hasImages = false;
-      needsUpdate = true;
-    }
-
-    if (!doc.defaultPrompt) {
-      updates.defaultPrompt = "Génère une image créative basée sur cette note";
-      needsUpdate = true;
-    }
-
-    // Retourner les mises à jour si nécessaire
-    if (needsUpdate) {
-      console.log(`✅ Mise à jour de la note ${doc._id}:`, updates);
-      return updates;
-    }
-  },
-});
+// Temporaire : désactiver jusqu'à configuration complète
+// export const run = migrations.runner();
+// export const addImageFieldsToNotes = migrations.define({
+//   table: "notes",
+//   migrateOne: async (ctx, doc) => {
+//     // Migration logic here
+//   },
+// });
 
 // 🚀 DÉPLOIEMENT RECOMMANDÉ 🚀
 // Puisque vos anciennes notes sont supprimées, vous pouvez simplement :

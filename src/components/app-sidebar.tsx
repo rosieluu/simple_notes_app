@@ -1,4 +1,6 @@
 import * as React from "react"
+import { useQuery } from "convex/react"
+import { api } from "../../convex/_generated/api"
 
 import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-projects"
@@ -125,6 +127,16 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  // Récupérer les vraies données utilisateur
+  const currentUser = useQuery(api.notes.getCurrentUser);
+  
+  // Préparer les données utilisateur avec des valeurs par défaut
+  const userData = {
+    name: currentUser?.name || "User", // "User" au lieu de "Sans nom"
+    email: currentUser?.email || "user@example.com",
+    avatar: "/avatars/user.jpg", // Avatar par défaut
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -135,7 +147,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

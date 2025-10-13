@@ -10,9 +10,13 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as imageGeneration from "../imageGeneration.js";
+import type * as imageGenerationOpenRouter from "../imageGenerationOpenRouter.js";
 import type * as migrations from "../migrations.js";
 import type * as notes from "../notes.js";
+import type * as openRouterDiagnostic from "../openRouterDiagnostic.js";
 import type * as router from "../router.js";
+import type * as testOpenRouterIntegration from "../testOpenRouterIntegration.js";
 
 import type {
   ApiFromModules,
@@ -31,9 +35,13 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  imageGeneration: typeof imageGeneration;
+  imageGenerationOpenRouter: typeof imageGenerationOpenRouter;
   migrations: typeof migrations;
   notes: typeof notes;
+  openRouterDiagnostic: typeof openRouterDiagnostic;
   router: typeof router;
+  testOpenRouterIntegration: typeof testOpenRouterIntegration;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

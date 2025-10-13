@@ -14,8 +14,9 @@ const applicationTables = {
     imageUrls: v.optional(v.array(v.string())), // Array d'URLs d'images
     hasImages: v.optional(v.boolean()), // Flag pour savoir s'il y a des images
     
-    // Prompt par défaut si contenu vide
-    defaultPrompt: v.optional(v.string()),
+    // Prompts pour la génération d'images
+    defaultPrompt: v.optional(v.string()), // Prompt par défaut si contenu vide
+    generatedPrompt: v.optional(v.string()), // Dernier prompt utilisé pour la génération
   })
     .index("by_user", ["userId"])
     .index("by_user_with_images", ["userId", "hasImages"])
@@ -27,6 +28,19 @@ const applicationTables = {
       searchField: "title", 
       filterFields: ["userId"],
     }),
+
+  // Table pour tracker les générations d'images par utilisateur
+  imageGenerations: defineTable({
+    userId: v.id("users"),
+    noteId: v.id("notes"),
+    date: v.string(), // Format YYYY-MM-DD pour compter par jour
+    prompt: v.string(),
+    imageUrl: v.string(),
+    success: v.boolean(),
+  })
+    .index("by_user_date", ["userId", "date"])
+    .index("by_user", ["userId"])
+    .index("by_note", ["noteId"]),
 };
 
 export default defineSchema({

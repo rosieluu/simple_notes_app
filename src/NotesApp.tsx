@@ -17,16 +17,24 @@ export function NotesApp() {
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [uploadedImageIds, setUploadedImageIds] = useState<Id<"_storage">[]>([]);
+  
+  // États pour la génération d'images avec OpenRouter
+  const [useOpenRouter, setUseOpenRouter] = useState(true); // Par défaut: utiliser OpenRouter
+  const [imageStyle, setImageStyle] = useState("photorealistic");
+  const [aspectRatio, setAspectRatio] = useState("1:1");
+  const [useContext7, setUseContext7] = useState(true);
 
   const notes = useQuery(api.notes.search, { 
     query: searchQuery, 
     tag: selectedTag || undefined 
   }) || [];
   const allTags = useQuery(api.notes.getAllTags) || [];
+  const currentUser = useQuery(api.notes.getCurrentUser); // Ajouter les infos utilisateur
   
   const createNote = useMutation(api.notes.create);
   const updateNote = useMutation(api.notes.update);
   const deleteNote = useMutation(api.notes.remove);
+  const triggerImageGenerationOpenRouter = useMutation(api.notes.triggerImageGenerationOpenRouter);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,13 +51,41 @@ export function NotesApp() {
         });
         toast.success("Note updated!");
       } else {
-        await createNote({
+        // Créer la note d'abord
+        const noteId = await createNote({
           title: title.trim() || undefined,
           content: content.trim() || undefined,
           tags,
           imageIds: uploadedImageIds.length > 0 ? uploadedImageIds : undefined,
+          autoGenerateImage: true, // Activer la génération automatique
         });
-        toast.success("Note created!");
+        
+        toast.success("Note created! 🎨 Generating AI image...");
+        
+        // Déclencher la génération d'image avec la nouvelle API OpenRouter
+        try {
+          if (useOpenRouter) {
+            await triggerImageGenerationOpenRouter({
+              noteId,
+              style: imageStyle,
+              aspectRatio: aspectRatio,
+              useContext7: useContext7,
+            });
+            toast.success(`🎨 OpenRouter + Gemini 2.5 Flash generation started! (${useContext7 ? 'avec Context7' : 'sans Context7'})`);
+          } else {
+            // Fallback vers OpenRouter avec paramètres de base
+            await triggerImageGenerationOpenRouter({
+              noteId,
+              style: imageStyle,
+              aspectRatio: aspectRatio,
+              useContext7: false,
+            });
+            toast.success("🎨 AI image generation started (basic mode)!");
+          }
+        } catch (genError) {
+          console.error("Image generation failed:", genError);
+          toast.error("Note created but image generation failed");
+        }
       }
       resetForm();
     } catch (error) {
@@ -74,6 +110,32 @@ export function NotesApp() {
       } catch (error) {
         toast.error("Failed to delete note");
       }
+    }
+  };
+
+  // Nouvelle fonction: Régénérer une image pour une note existante
+  const handleRegenerateImage = async (noteId: Id<"notes">) => {
+    try {
+      if (useOpenRouter) {
+        await triggerImageGenerationOpenRouter({
+          noteId,
+          style: imageStyle,
+          aspectRatio: aspectRatio,
+          useContext7: useContext7,
+        });
+        toast.success(`🎨 Régénération OpenRouter lancée! (${useContext7 ? 'avec Context7' : 'sans Context7'})`);
+      } else {
+        await triggerImageGenerationOpenRouter({
+          noteId,
+          style: imageStyle,
+          aspectRatio: aspectRatio,
+          useContext7: false,
+        });
+        toast.success("🎨 Régénération lancée (basic mode)!");
+      }
+    } catch (error) {
+      console.error("Regeneration failed:", error);
+      toast.error("Failed to regenerate image");
     }
   };
 
@@ -174,7 +236,7 @@ export function NotesApp() {
               d="M12 4v16m8-8H4" 
             />
           </svg>
-          Create New Note
+          ✨ Create & Generate Photo
         </Button>
       )}
 
@@ -264,12 +326,80 @@ export function NotesApp() {
             )}
           </div>
 
+          {/* Configuration de génération d'images OpenRouter */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="text-sm font-semibold text-blue-800 mb-3">🎨 Configuration génération d'images</h4>
+            
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              {/* API Selection */}
+              <div>
+                <label className="block text-xs font-medium text-blue-700 mb-1">API</label>
+                <select
+                  value={useOpenRouter ? "openrouter" : "legacy"}
+                  onChange={(e) => setUseOpenRouter(e.target.value === "openrouter")}
+                  className="w-full px-2 py-1 text-xs border border-blue-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                >
+                  <option value="openrouter">🚀 OpenRouter + Gemini 2.5 Flash</option>
+                  <option value="legacy">📱 Legacy API</option>
+                </select>
+              </div>
+
+              {/* Style Selection */}
+              <div>
+                <label className="block text-xs font-medium text-blue-700 mb-1">Style</label>
+                <select
+                  value={imageStyle}
+                  onChange={(e) => setImageStyle(e.target.value)}
+                  className="w-full px-2 py-1 text-xs border border-blue-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                >
+                  <option value="photorealistic">📸 Photorealistic</option>
+                  <option value="artistic">🎨 Artistic</option>
+                  <option value="minimalist">⚪ Minimalist</option>
+                  <option value="cartoon">🎪 Cartoon</option>
+                </select>
+              </div>
+            </div>
+
+            {useOpenRouter && (
+              <div className="grid grid-cols-2 gap-4">
+                {/* Aspect Ratio */}
+                <div>
+                  <label className="block text-xs font-medium text-blue-700 mb-1">Aspect Ratio</label>
+                  <select
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value)}
+                    className="w-full px-2 py-1 text-xs border border-blue-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  >
+                    <option value="1:1">⬜ Carré (1:1)</option>
+                    <option value="16:9">📺 Paysage (16:9)</option>
+                    <option value="9:16">📱 Portrait (9:16)</option>
+                    <option value="3:4">📷 Photo (3:4)</option>
+                    <option value="4:3">🖥️ Écran (4:3)</option>
+                  </select>
+                </div>
+
+                {/* Context7 Toggle */}
+                <div className="flex items-center">
+                  <label className="flex items-center text-xs font-medium text-blue-700">
+                    <input
+                      type="checkbox"
+                      checked={useContext7}
+                      onChange={(e) => setUseContext7(e.target.checked)}
+                      className="mr-2"
+                    />
+                    🔍 Utiliser Context7
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="flex gap-3">
             <button
               type="submit"
               className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
             >
-              {editingNote ? "Update" : "Create"}
+              {editingNote ? "Update" : "🎨 Create & Generate Photo"}
             </button>
             <button
               type="button"
@@ -294,6 +424,13 @@ export function NotesApp() {
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-lg font-semibold text-gray-900 flex-1">{note.title}</h3>
                 <div className="flex gap-2 ml-4">
+                  <button
+                    onClick={() => handleRegenerateImage(note._id)}
+                    className="text-green-500 hover:text-green-700 text-sm font-medium"
+                    title="Régénérer image avec OpenRouter"
+                  >
+                    🎨 Regen
+                  </button>
                   <button
                     onClick={() => handleEdit(note)}
                     className="text-blue-500 hover:text-blue-700 text-sm font-medium"
@@ -341,6 +478,18 @@ export function NotesApp() {
                       #{tag}
                     </span>
                   ))}
+                </div>
+              )}
+              
+              {/* Affichage du statut de génération et du prompt */}
+              {note.generatedPrompt && (
+                <div className="mb-3 p-2 bg-purple-50 rounded border border-purple-200">
+                  <div className="text-xs font-medium text-purple-700 mb-1">
+                    🤖 Prompt de génération:
+                  </div>
+                  <div className="text-xs text-purple-600 italic">
+                    {note.generatedPrompt}
+                  </div>
                 </div>
               )}
               
