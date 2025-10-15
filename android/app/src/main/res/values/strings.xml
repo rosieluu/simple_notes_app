@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">simple-notes</string>
+    <string name="title_activity_main">simple-notes</string>
+    <string name="package_name">com.simplenotes.app</string>
+    <string name="custom_url_scheme">com.simplenotes.app</string>
+</resources>
