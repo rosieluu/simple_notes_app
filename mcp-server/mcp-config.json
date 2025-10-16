@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "simple-notes": {
+      "command": "node",
+      "args": [
+        "/home/hongluu/dataupskill/aiappcreator/coding/simple_notes_app/mcp-server/dist/index.js"
+      ],
+      "env": {
+        "CONVEX_URL": "https://valiant-marlin-732.convex.cloud"
+      }
+    }
+  }
+}
